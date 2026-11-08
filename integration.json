@@ -1,0 +1,361 @@
+{
+  "schemaVersion": 1,
+  "id": "render-mcp",
+  "kind": "provider-connector",
+  "artifactType": "connector",
+  "qualityVersion": 2,
+  "title": "Render MCP server",
+  "description": "Review deployment history then approve a service deployment. Read provider data first, then explicitly approve the selected change with operator write opt-in and a unique per-call approval key.",
+  "status": "ready",
+  "verification": "mock-only",
+  "releaseEligible": true,
+  "maintainer": "jannikco",
+  "license": "MIT",
+  "product": "pipmcp",
+  "appSlug": "render",
+  "appName": "Render",
+  "operationIds": [
+    "list_services",
+    "list_deploys",
+    "create_deploy"
+  ],
+  "sourceRevision": "f2c5820b8061d0c495f12ac592c646c987494b39cc0e8ede957a58007654a6a5",
+  "evidence": [
+    "Actual tools/call and direct-provider request contract tests"
+  ],
+  "provenance": [
+    "https://api-docs.render.com/reference/list-services",
+    "https://api-docs.render.com/reference/list-deploys",
+    "https://api-docs.render.com/reference/create-deploy"
+  ],
+  "attributionSlug": "github-render-mcp",
+  "connectorId": "render",
+  "connector": {
+    "id": "render",
+    "appSlug": "render",
+    "name": "Render",
+    "version": "0.2.0",
+    "baseUrl": "https://api.render.com/v1",
+    "auth": {
+      "type": "bearer",
+      "env": "RENDER_API_KEY"
+    },
+    "tools": [
+      {
+        "name": "list_services",
+        "description": "List services.",
+        "method": "GET",
+        "path": "/services",
+        "readOnly": true,
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "limit": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100
+            },
+            "cursor": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 2048,
+              "description": "Value"
+            }
+          },
+          "required": [],
+          "additionalProperties": false
+        },
+        "bindings": {
+          "path": [],
+          "query": {
+            "limit": "limit",
+            "cursor": "cursor"
+          },
+          "body": {}
+        },
+        "sampleArguments": {
+          "limit": 10
+        },
+        "provenance": [
+          "https://api-docs.render.com/reference/list-services",
+          "https://api-docs.render.com/reference/list-deploys",
+          "https://api-docs.render.com/reference/create-deploy"
+        ],
+        "approvalRequired": false,
+        "evidence": {
+          "providerLiveValidation": "not-run",
+          "localValidation": "provider-request-fixture"
+        }
+      },
+      {
+        "name": "list_deploys",
+        "description": "List deploys.",
+        "method": "GET",
+        "path": "/services/{serviceId}/deploys",
+        "readOnly": true,
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "serviceId": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 2048,
+              "description": "Value"
+            },
+            "limit": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100
+            },
+            "cursor": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 2048,
+              "description": "Value"
+            }
+          },
+          "required": [
+            "serviceId"
+          ],
+          "additionalProperties": false
+        },
+        "bindings": {
+          "path": [
+            "serviceId"
+          ],
+          "query": {
+            "limit": "limit",
+            "cursor": "cursor"
+          },
+          "body": {}
+        },
+        "sampleArguments": {
+          "serviceId": "srv-example",
+          "limit": 10
+        },
+        "provenance": [
+          "https://api-docs.render.com/reference/list-services",
+          "https://api-docs.render.com/reference/list-deploys",
+          "https://api-docs.render.com/reference/create-deploy"
+        ],
+        "approvalRequired": false,
+        "evidence": {
+          "providerLiveValidation": "not-run",
+          "localValidation": "provider-request-fixture"
+        }
+      },
+      {
+        "name": "create_deploy",
+        "description": "Create deploy.",
+        "method": "POST",
+        "path": "/services/{serviceId}/deploys",
+        "readOnly": false,
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "serviceId": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 2048,
+              "description": "Value"
+            },
+            "clearCache": {
+              "type": "string",
+              "enum": [
+                "clear",
+                "do_not_clear"
+              ]
+            },
+            "commitId": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 2048,
+              "description": "Value"
+            }
+          },
+          "required": [
+            "serviceId",
+            "clearCache"
+          ],
+          "additionalProperties": false
+        },
+        "bindings": {
+          "path": [
+            "serviceId"
+          ],
+          "query": {},
+          "body": {
+            "clearCache": "clearCache",
+            "commitId": "commitId"
+          }
+        },
+        "sampleArguments": {
+          "serviceId": "srv-example",
+          "clearCache": "do_not_clear"
+        },
+        "provenance": [
+          "https://api-docs.render.com/reference/list-services",
+          "https://api-docs.render.com/reference/list-deploys",
+          "https://api-docs.render.com/reference/create-deploy"
+        ],
+        "approvalRequired": true,
+        "evidence": {
+          "providerLiveValidation": "not-run",
+          "localValidation": "provider-request-fixture"
+        }
+      }
+    ],
+    "workflow": {
+      "name": "Review deployment history then approve a service deployment",
+      "description": "Review deployment history then approve a service deployment. Read provider data first, then explicitly approve the selected change with operator write opt-in and a unique per-call approval key.",
+      "steps": [
+        "list_services",
+        "list_deploys",
+        "create_deploy"
+      ]
+    },
+    "provenance": [
+      "https://api-docs.render.com/reference/list-services",
+      "https://api-docs.render.com/reference/list-deploys",
+      "https://api-docs.render.com/reference/create-deploy"
+    ],
+    "verification": "mock-only",
+    "providerLiveValidation": "not-run",
+    "capabilityEvidence": {
+      "local": {
+        "level": "Tested",
+        "operations": [
+          {
+            "name": "list_services",
+            "level": "Tested",
+            "evidenceRefs": [
+              "Provider request/stdio contract tests"
+            ],
+            "method": "contract-fixture"
+          },
+          {
+            "name": "list_deploys",
+            "level": "Tested",
+            "evidenceRefs": [
+              "Provider request/stdio contract tests"
+            ],
+            "method": "contract-fixture"
+          },
+          {
+            "name": "create_deploy",
+            "level": "Tested",
+            "evidenceRefs": [
+              "Provider request/stdio contract tests"
+            ],
+            "method": "contract-fixture"
+          }
+        ],
+        "evidenceRefs": [
+          "Provider request/stdio contract tests"
+        ],
+        "mode": "local"
+      },
+      "managed": {
+        "level": "Documented",
+        "operations": [
+          {
+            "name": "list_services",
+            "level": "Documented",
+            "evidenceRefs": [],
+            "method": "documentation"
+          },
+          {
+            "name": "list_deploys",
+            "level": "Documented",
+            "evidenceRefs": [],
+            "method": "documentation"
+          },
+          {
+            "name": "create_deploy",
+            "level": "Documented",
+            "evidenceRefs": [],
+            "method": "documentation"
+          }
+        ],
+        "evidenceRefs": [],
+        "mode": "managed"
+      }
+    },
+    "limitations": [
+      "Render returns per-entry cursor metadata; pass the documented cursor explicitly. Automatic array-entry pagination is not implemented."
+    ],
+    "repoId": "render-mcp",
+    "product": "pipmcp",
+    "artifactType": "connector",
+    "sourceRevision": "f2c5820b8061d0c495f12ac592c646c987494b39cc0e8ede957a58007654a6a5",
+    "managedAvailability": {
+      "status": "listed",
+      "checkedAt": "2026-11-08T13:20:45.156456+00:00"
+    }
+  },
+  "capabilityEvidence": {
+    "local": {
+      "level": "Tested",
+      "operations": [
+        {
+          "name": "list_services",
+          "level": "Tested",
+          "evidenceRefs": [
+            "Provider request/stdio contract tests"
+          ],
+          "method": "contract-fixture"
+        },
+        {
+          "name": "list_deploys",
+          "level": "Tested",
+          "evidenceRefs": [
+            "Provider request/stdio contract tests"
+          ],
+          "method": "contract-fixture"
+        },
+        {
+          "name": "create_deploy",
+          "level": "Tested",
+          "evidenceRefs": [
+            "Provider request/stdio contract tests"
+          ],
+          "method": "contract-fixture"
+        }
+      ],
+      "evidenceRefs": [
+        "Provider request/stdio contract tests"
+      ],
+      "mode": "local"
+    },
+    "managed": {
+      "level": "Documented",
+      "operations": [
+        {
+          "name": "list_services",
+          "level": "Documented",
+          "evidenceRefs": [],
+          "method": "documentation"
+        },
+        {
+          "name": "list_deploys",
+          "level": "Documented",
+          "evidenceRefs": [],
+          "method": "documentation"
+        },
+        {
+          "name": "create_deploy",
+          "level": "Documented",
+          "evidenceRefs": [],
+          "method": "documentation"
+        }
+      ],
+      "evidenceRefs": [],
+      "mode": "managed"
+    }
+  },
+  "utility": {
+    "problem": "Review deployment history then approve a service deployment. Read provider data first, then explicitly approve the selected change with operator write opt-in and a unique per-call approval key.",
+    "output": "Actual provider API results through local MCP tools"
+  },
+  "providerDocs": "https://api-docs.render.com/reference/list-services"
+}
