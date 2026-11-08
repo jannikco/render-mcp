@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "version": "1.0.0",
+  "product": "pipmcp",
+  "credential": "PIPMCP_API_KEY",
+  "skills": [
+    {
+      "name": "pipmcp-render",
+      "description": "Connect AI agents to Render using one PipMCP API key and actual hosted tool discovery."
+    }
+  ],
+  "files": {
+    "skills/pipmcp-render/SKILL.md": "2ca8d510c0065491c6367b92edcf48a34857b06b730ec3794cec5c1c97375744"
+  }
+}
